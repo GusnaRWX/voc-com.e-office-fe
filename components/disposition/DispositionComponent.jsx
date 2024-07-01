@@ -1,9 +1,12 @@
 import React, {useState} from "react";
 import {Card, Box, TableRow, TableCell, IconButton} from '@mui/material';
 import {exampleDataTable} from "@/utils/siteSetting";
-import {CustomTable, CustomDatePicker, CustomSelect, SearchField} from "@/components/_shared/form";
+import {CustomTable, CustomDatePicker, CustomSelect, SearchField, CustomButton} from "@/components/_shared/form";
 import {FaEye, FaPrint, FaTrash} from "react-icons/fa6";
-import {ConfirmationModal, CustomModalPdfView} from "@/components/_shared/common";
+import {ConfirmationModal, CustomModalPdfView, CustomModalTimeline} from "@/components/_shared/common";
+import {FaPlusSquare} from "react-icons/fa";
+import {useRouter} from "next/router";
+import { MdOutlineAccessTime } from "react-icons/md";
 
 const headerItems = [
     {id: 'no', label: 'No', sortable: false},
@@ -25,6 +28,8 @@ const DispositionComponent = () => {
     const [modalDelete, setModalDelete] = useState(false);
     const [deleteId, setDeleteId] = useState('');
     const [modalView, setModalView] = useState(false);
+    const [modalStatus, setModalStatus] = useState(false);
+    const {push} = useRouter()
 
     const confirmationDelete = (id) => {
         setDeleteId(id)
@@ -81,7 +86,7 @@ const DispositionComponent = () => {
                        placeholder={'Type for search...'}
                    />
                </Box>
-               <Box sx={{ width: '50%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'end', gap: '1rem' }}>
+               <Box sx={{ width: '60%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'end', gap: '1rem' }}>
                    <Box>
                        <CustomDatePicker
                            id={'input_date'}
@@ -102,6 +107,17 @@ const DispositionComponent = () => {
                            fullWidth={true}
                        />
                    </Box>
+                   <CustomButton
+                       id={'btn_add'}
+                       variant={'outlined'}
+                       color={'grey'}
+                       size={'medium'}
+                       type={'button'}
+                       onClick={() => push('/disposisi/create')}
+                   >
+                       <FaPlusSquare size={12}/>
+                       <span style={{marginLeft: '2px'}}>Buat Disposisi</span>
+                   </CustomButton>
                </Box>
            </Box>
            <CustomTable
@@ -132,6 +148,9 @@ const DispositionComponent = () => {
                                    <IconButton>
                                        <FaPrint size={15} color={'#6366F1'}/>
                                    </IconButton>
+                                   <IconButton onClick={() => setModalStatus(true)}>
+                                       <MdOutlineAccessTime size={15} color={'#F97316'}/>
+                                   </IconButton>
                                    <IconButton onClick={() => confirmationDelete(item.title)}>
                                        <FaTrash size={15} color={'#F43F5E'}/>
                                    </IconButton>
@@ -154,6 +173,10 @@ const DispositionComponent = () => {
                open={modalView}
                onClose={() => setModalView(false)}
                title={'Preview'}
+           />
+           <CustomModalTimeline
+               open={modalStatus}
+               onClose={() => setModalStatus(false)}
            />
        </Card>
    )
