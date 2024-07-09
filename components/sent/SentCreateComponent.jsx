@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {Card, Typography, Box, Stepper, Step, StepLabel} from '@mui/material'
 import {useRouter} from "next/router";
 import {useForm} from "@/hooks";
@@ -9,6 +9,8 @@ import EndLetterForm from "@/components/_shared/commonForm/inbox/EndLetterForm";
 import NumberingValidatorForm from "@/components/_shared/commonForm/inbox/NumberingValidatorForm";
 import {CustomButton} from "@/components/_shared/form";
 import {CustomModalPdfView, ConfirmationModal} from "@/components/_shared/common";
+import {useAppDispatch} from "@/hooks";
+import {postLetterRequested} from "@/store/reducers/slice/letterSlice";
 
 const steps = [
     'Penerima Surat',
@@ -19,36 +21,44 @@ const steps = [
 ]
 
 const SentCreateComponent = () => {
+    const dispatch = useAppDispatch();
+    const ref = useRef(null);
     const {query, push} = useRouter();
     const [step, setStep] = useState(0);
     const [preview, setPreview] = useState(false);
     const [modalConfirm, setModalConfirm] = useState(false);
 
     const defaultValue = {
-        internal_name: '',
-        external_receiver: [
+        personnel: '',
+        letter_personnel_external: [
             {
                 name: '',
                 email: '',
                 description: ''
             }
         ],
-        letter_type: '',
+        letter_head: '',
+        letter_place: '',
         date: null,
-        receiver: '',
-        place_to: '',
-        category: '',
-        attach: '',
-        about: '',
-        content: '',
-        mandate: '',
-        mandate_position: '',
+        letter_personnel_target: [
+            {
+                personnel: '',
+                place: ''
+            }
+        ],
+        letter_rule: '',
+        attachment: '',
+        subject: '',
+        letter_content: '',
+        mandate_personnel: '',
+        mandate_job_title: '',
         signature_group: [
             {signature_name: ''}
         ],
         numbering: '',
-        validator: ''
-
+        validator: '',
+        type: 2,
+        letter_type: 'Surat Biasa'
     }
 
     const [initialValues, setInitialValues] = useState(defaultValue)
@@ -63,15 +73,15 @@ const SentCreateComponent = () => {
     const handleAddExternal = () => {
         setInitialValues({
             ...initialValues,
-            external_receiver: [
-                ...initialValues.external_receiver,
+            letter_personnel_external: [
+                ...initialValues.letter_personnel_external,
                 {name: '', email: '', description: ''}
             ]
         })
         setValues({
             ...values,
-            external_receiver: [
-                ...values.external_receiver,
+            letter_personnel_external: [
+                ...values.letter_personnel_external,
                 {name: '', email: '', description: ''}
             ]
         })
@@ -82,7 +92,7 @@ const SentCreateComponent = () => {
             ...initialValues,
             signature_group: [
                 ...initialValues.signature_group,
-                {signature_name: ''}
+                {signatureName: ''}
             ]
         })
 
@@ -90,23 +100,23 @@ const SentCreateComponent = () => {
             ...values,
             signature_group: [
                 ...values.signature_group,
-                {signature_name: ''}
+                {signatureName: ''}
             ]
         })
     }
 
     const handleDeleteExternal = (index) => {
-        const initialIndex = initialValues.external_receiver.filter((_, idx) => idx !== index);
-        const valuesIndex = values.external_receiver.filter((_, idx) => idx !== index);
+        const initialIndex = initialValues.letter_personnel_external.filter((_, idx) => idx !== index);
+        const valuesIndex = values.letter_personnel_external.filter((_, idx) => idx !== index);
 
         setInitialValues({
             ...initialValues,
-            external_receiver: initialIndex
+            letter_personnel_external: initialIndex
         })
 
         setValues({
             ...values,
-            external_receiver: valuesIndex
+            letter_personnel_external: valuesIndex
         })
     }
 
@@ -124,6 +134,19 @@ const SentCreateComponent = () => {
             signature_group: valuesIndex
         })
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        setModalConfirm(true);
+    }
+
+    const handleFormSubmit = () => {
+        dispatch({
+            type: postLetterRequested.toString(),
+            payload: values
+        })
+    }
     return (
         <Card sx={{ p: '1rem' }}>
             <Typography sx={{ fontWeight: 'bold', mb: '2rem' }}>
@@ -139,7 +162,7 @@ const SentCreateComponent = () => {
                         ))
                     }
                 </Stepper>
-                <form>
+                <form ref={ref} onSubmit={(e) => handleSubmit(e)}>
                     {
                         step === 0 && (
                             <RecipientLetterForm
@@ -232,8 +255,7 @@ const SentCreateComponent = () => {
                                 fullWidth={false}
                                 variant={'contained'}
                                 color={'primary'}
-                                type={'button'}
-                                onClick={() => setModalConfirm(true)}
+                                type={'submit'}
                                >
                                    <span style={{ color: '#FFFFFF' }}>Selesai</span>
                                </CustomButton>
@@ -251,7 +273,7 @@ const SentCreateComponent = () => {
                  open={modalConfirm}
                  type={'confirmation'}
                  onClose={() => setModalConfirm(false)}
-                 onConfirm={() => push('/surat-keluar')}
+                 onConfirm={() => handleFormSubmit()}
                 />
             </Box>
         </Card>

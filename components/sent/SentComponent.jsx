@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Card, Box, TableRow, TableCell, IconButton, Typography, Grid} from '@mui/material';
 import {exampleDataTable} from "@/utils/siteSetting";
 import {CustomTable, CustomDatePicker, CustomSelect, SearchField, CustomButton} from "@/components/_shared/form";
@@ -8,11 +8,13 @@ import {FaPlusSquare} from "react-icons/fa";
 import {letterTypeOptions} from "@/utils/siteSetting";
 import Image from "next/image";
 import {useRouter} from "next/router";
+import {useAppDispatch, useAppSelector} from "@/hooks";
+import {getLetterRequested} from "@/store/reducers/slice/letterSlice";
 
 const headerItems = [
-    {id: 'no', label: 'No', sortable: false},
-    {id: 'dateIn', label: 'Tanggal Masuk', sortable: true},
-    {id: 'numberOfLetter', label: 'Nomor Surat', sortable: true},
+    {id: 'seq', label: 'No', sortable: false},
+    {id: 'date', label: 'Tanggal Masuk', sortable: true},
+    {id: 'no', label: 'Nomor Surat', sortable: true},
     {id: 'subject', label: 'Perihal', sortable: true},
     {id: 'letterType', label: 'Jenis Surat', sortable: true},
     {id: 'actions', label: 'Aksi', sortable: false}
@@ -20,9 +22,10 @@ const headerItems = [
 
 
 const SentComponent = () => {
-    const [rowsPerPage, setRowsPerPage] = useState(5)
+    const state = useAppSelector((state) => state.letter);
+    const [rowsPerPage, setRowsPerPage] = useState(state?.itemPerPage || 10)
     const {push} = useRouter();
-    const [page, setPage] = useState(1)
+    const [page, setPage] = useState(state.page || 1)
     const [direction, setDirection] = useState('desc')
     const [sort, setSort] = useState('')
     const [search, setSearch] = useState('')
@@ -32,6 +35,24 @@ const SentComponent = () => {
     const [deleteId, setDeleteId] = useState('');
     const [modalView, setModalView] = useState(false);
     const [modalAdd, setModalAdd] = useState(false);
+    const dispatch = useAppDispatch()
+
+
+    console.log('state : ', state)
+
+    useEffect(() => {
+        dispatch({
+            type: getLetterRequested.toString(),
+            payload: {
+                page: 1,
+                itemPerPage: 10,
+                sort: '',
+                direction: 'desc',
+                search: '',
+                type: 2
+            }
+        })
+    }, []);
 
     const confirmationDelete = (id) => {
         setDeleteId(id)
@@ -79,9 +100,23 @@ const SentComponent = () => {
     const handleRoutePage = (path, title) => {
         push({
             pathname: path,
-            query: { title: title }
+            query: { title: title, letterType: title }
         })
     }
+
+    useEffect(() => {
+        dispatch({
+            type: getLetterRequested.toString(),
+            payload: {
+                page: page,
+                itemPerPage: rowsPerPage,
+                direction: direction,
+                sort: sort,
+                search: search,
+                type: 2
+            }
+        })
+    }, [page, rowsPerPage, direction, sort, search])
 
     return (
         <Card sx={{ padding: '1rem' }}>
@@ -131,7 +166,7 @@ const SentComponent = () => {
                 </Box>
             </Box>
             <CustomTable
-                count={exampleDataTable.length}
+                count={state?.itemTotals}
                 rowsPerPageOptions={[5, 10, 15, 25, 50, 100]}
                 rowsPerPage={rowsPerPage}
                 page={page}
@@ -143,28 +178,44 @@ const SentComponent = () => {
                 header={headerItems}
             >
                 {
-                    exampleDataTable.map((item, index) => (
-                        <TableRow key={index}>
-                            <TableCell>{item.no}</TableCell>
-                            <TableCell>{item.dateIn}</TableCell>
-                            <TableCell>{item.numberOfLetter}</TableCell>
-                            <TableCell>{item.subject}</TableCell>
-                            <TableCell>{item.letterType}</TableCell>
-                            <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <IconButton onClick={() => setModalView(true)}>
-                                        <FaEye size={15} color={'#3FC1C9'}/>
-                                    </IconButton>
-                                    <IconButton>
-                                        <FaPrint size={15} color={'#6366F1'}/>
-                                    </IconButton>
-                                    <IconButton onClick={() => confirmationDelete(item.title)}>
-                                        <FaTrash size={15} color={'#F43F5E'}/>
-                                    </IconButton>
-                                </Box>
-                            </TableCell>
+                    state?.loading && (
+                        <TableRow>
+                            <TableCell sx={{ textAlign: 'center' }} colSpan={6}>Loading...</TableCell>
                         </TableRow>
-                    ))
+                    )
+                }
+                {
+                    !state.loading && state?.data.length === 0 && (
+                        <TableRow>
+                            <TableCell sx={{ textAlign: 'center' }} colSpan={6}>Data Not Found</TableCell>
+                        </TableRow>
+                    )
+                }
+                {
+                    !state.loading && state?.data.length > 0 && (
+                        state?.data?.map((item, index) => (
+                            <TableRow key={index}>
+                                <TableCell>{item?.seq}</TableCell>
+                                <TableCell>{item?.date}</TableCell>
+                                <TableCell>{item?.no}</TableCell>
+                                <TableCell>{item.subject}</TableCell>
+                                <TableCell>{item.letterType}</TableCell>
+                                <TableCell>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <IconButton onClick={() => setModalView(true)}>
+                                            <FaEye size={15} color={'#3FC1C9'}/>
+                                        </IconButton>
+                                        <IconButton>
+                                            <FaPrint size={15} color={'#6366F1'}/>
+                                        </IconButton>
+                                        <IconButton onClick={() => confirmationDelete(item.title)}>
+                                            <FaTrash size={15} color={'#F43F5E'}/>
+                                        </IconButton>
+                                    </Box>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    )
                 }
             </CustomTable>
             <ConfirmationModal
@@ -204,7 +255,7 @@ const SentComponent = () => {
                                   mb: '1rem',
                                   cursor: 'pointer',
                               }}
-                               onClick={() => handleRoutePage('/surat-keluar/create', item.title)}
+                               onClick={() => handleRoutePage('/surat-keluar/create', 'Surat Biasa')}
                               >
                                  <Image
                                   src={item.image}

@@ -16,7 +16,7 @@ const ContentLetterForm = ({
     useEffect(() => {
             handleInputChange({
                 target: {
-                    name: 'content',
+                    name: 'letter_content',
                     value: val
                 }
             })

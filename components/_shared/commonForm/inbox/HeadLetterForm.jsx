@@ -14,10 +14,10 @@ const HeadLetterForm = ({
     return (
         <Box sx={{ paddingLeft: '4rem', paddingRight: '4rem' }}>
               <CustomSelect
-               id={`input_letter_type`}
-               name={'letter_type'}
+               id={`input_letterHead`}
+               name={'letter_head'}
                onChange={handleInputChange}
-               value={values.letterType}
+               value={values.letter_head}
                label={'Jenis / Kop Surat'}
                isRequired={true}
                fullWidth={true}
@@ -33,10 +33,10 @@ const HeadLetterForm = ({
             <Grid container spacing={2} mb={'1rem'}>
                 <Grid item lg={6} xl={6}>
                    <CustomTextField
-                    id={'input_place'}
-                    name={'place'}
+                    id={'input_letterPlace'}
+                    name={'letter_place'}
                     onChange={handleInputChange}
-                    value={values.place}
+                    value={values.letterPlace}
                     label={'Tempat'}
                     isRequired={true}
                     fullWidth={true}
@@ -60,10 +60,10 @@ const HeadLetterForm = ({
             <Grid container spacing={2} mb={'1rem'}>
                 <Grid item lg={6} xl={6}>
                     <CustomTextField
-                        id={'input_receiver'}
-                        name={'receiver'}
+                        id={'input_personnel_target_personnel'}
+                        name={'letter_personnel_target.0.personnel'}
                         onChange={handleInputChange}
-                        value={values.receiver}
+                        value={values.letter_personnel_target[0].personnel}
                         label={'Kepada'}
                         isRequired={true}
                         fullWidth={true}
@@ -73,10 +73,10 @@ const HeadLetterForm = ({
                 </Grid>
                 <Grid item lg={6} xl={6}>
                     <CustomTextField
-                        id={'input_place_to'}
-                        name={'place_to'}
+                        id={'input_letterPersonalTarget_place'}
+                        name={'letter_personnel_target.0.place'}
                         onChange={handleInputChange}
-                        value={values.place_to}
+                        value={values.letter_personnel_target[0].place}
                         label={'Di'}
                         isRequired={true}
                         fullWidth={true}
@@ -88,10 +88,10 @@ const HeadLetterForm = ({
             <Grid container spacing={2} mb={'1rem'}>
                 <Grid item lg={6} xl={6}>
                     <CustomSelect
-                        id={`input_category`}
-                        name={'category'}
+                        id={`input_letterRule`}
+                        name={'letter_rule'}
                         onChange={handleInputChange}
-                        value={values.category}
+                        value={values.letter_rule}
                         label={'Sifat'}
                         isRequired={true}
                         fullWidth={true}
@@ -105,10 +105,10 @@ const HeadLetterForm = ({
                 </Grid>
                 <Grid item lg={6} xl={6}>
                     <CustomTextField
-                        id={'input_attach'}
-                        name={'attach'}
+                        id={'input_attachment'}
+                        name={'attachment'}
                         onChange={handleInputChange}
-                        value={values.attach}
+                        value={values.attachment}
                         label={'Lampiran'}
                         isRequired={true}
                         fullWidth={true}
@@ -118,10 +118,10 @@ const HeadLetterForm = ({
                 </Grid>
             </Grid>
             <CustomTextField
-                id={'input_about'}
-                name={'about'}
+                id={'input_subject'}
+                name={'subject'}
                 onChange={handleInputChange}
-                value={values.about}
+                value={values.subject}
                 label={'Hal'}
                 isRequired={true}
                 fullWidth={true}

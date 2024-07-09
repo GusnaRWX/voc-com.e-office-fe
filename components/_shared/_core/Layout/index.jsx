@@ -1,9 +1,10 @@
-import React, {useState} from 'react'
-import {List, Box, styled, Container} from "@mui/material";
+import React, {useState, useEffect} from 'react'
+import {List, Box, styled, Container, Snackbar, Alert} from "@mui/material";
 import Appbar from "@/components/_shared/_core/Appbar";
 import DrawerCore from "@/components/_shared/_core/Drawer";
 import {Menus} from "@/components/_shared/_core/menu";
 import SidebarItem from "@/components/_shared/_core/SidebarItem";
+import {useAppDispatch, useAppSelector} from "@/hooks";
 
 const drawerWidth = 260
 
@@ -21,6 +22,18 @@ const Layout = ({
 }) => {
     const [open, setOpen] = useState(true)
     const [menuOpen, setMenuOpen] = useState('')
+    const [snackbarOpen, setSnackbarOpen] = useState(false)
+    const state = useAppSelector((state) => state.responser)
+    const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        if (state.code !== 0) {
+            setSnackbarOpen(true)
+            setTimeout(() => {
+                setSnackbarOpen(false)
+            }, 6000)
+        }
+    }, [state.code]);
 
     const handleDrawerToggle = () => {
         setOpen(!open)
@@ -75,6 +88,34 @@ const Layout = ({
                {drawer}
            </DrawerCore>
            <MainComponent component={'main'}>
+               {
+                   [200, 201].includes(state.code) && (
+                       <Snackbar
+                        open={snackbarOpen}
+                        autoHideDuration={5000}
+                        anchorOrigin={{ 'vertical': 'top', 'horizontal': 'right' }}
+                        onClose={() => setSnackbarOpen(false)}
+                       >
+                           <Alert severity={'success'} onClose={() => setSnackbarOpen(false)} sx={{ width: '100%' }}>
+                               {state?.message}
+                           </Alert>
+                       </Snackbar>
+                   )
+               }
+               {
+                   ![200, 201, 0].includes(state.code) && (
+                       <Snackbar
+                           open={snackbarOpen}
+                           autoHideDuration={5000}
+                           anchorOrigin={{ 'vertical': 'top', 'horizontal': 'right' }}
+                           onClose={() => setSnackbarOpen(false)}
+                       >
+                           <Alert severity={'error'} onClose={() => setSnackbarOpen(false)} sx={{ width: '100%' }}>
+                               {state?.message}
+                           </Alert>
+                       </Snackbar>
+                   )
+               }
              <Container
               maxWidth={'xl'}
               sx={{

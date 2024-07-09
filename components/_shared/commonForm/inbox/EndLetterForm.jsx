@@ -17,12 +17,12 @@ const EndLetterForm = ({
     return (
       <Box sx={{ paddingLeft: '4rem', paddingRight: '4rem', display: 'flex', flexDirection: 'column' }}>
         <CustomSelect
-         id={'input_mandate'}
-         name={'mandate'}
+         id={'input_mandate_personnel'}
+         name={'mandate_personnel'}
          label={'Mandat'}
          isRequired={true}
          onChange={(e) => handleInputChange(e)}
-         value={values.mandate}
+         value={values.mandate_personnel}
          error={false}
          placeholder={'Pilih Mandat'}
          options={[
@@ -34,12 +34,12 @@ const EndLetterForm = ({
          }}
         />
           <CustomSelect
-              id={'input_mandate'}
-              name={'mandate_position'}
+              id={'input_mandate_job_title'}
+              name={'mandate_job_title'}
               label={'Jabatan Mandat'}
               isRequired={true}
               onChange={(e) => handleInputChange(e)}
-              value={values.mandate_position}
+              value={values.mandate_job_title}
               error={false}
               placeholder={'Pilih Jabatan'}
               options={[

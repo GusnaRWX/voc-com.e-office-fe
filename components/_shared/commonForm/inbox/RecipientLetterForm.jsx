@@ -19,23 +19,23 @@ const RecipientLetterForm = ({
     return (
         <Box sx={{ paddingLeft: '4rem', paddingRight: '4rem' }}>
          <CustomTextField
-          id={'input_internal_name'}
-          name={'internal_name'}
+          id={'input_personnel'}
+          name={'personnel'}
           label={'Penerima Surat (Dinas)'}
           isRequired={false}
           onChange={(e) => handleInputChange(e)}
-          value={values.internal_name}
+          value={values.personnel}
           error={false}
           type={'text'}
           sx={{ mb: '2rem' }}
           placeholder={'Ketik nama / jabatan'}
          />
             {
-                values.external_receiver.map((form, index) => (
+                values.letter_personnel_external.map((form, index) => (
                     <Box key={index} mb={'2rem'}>
                       <CustomTextField
-                       id={`input_external_name_${index}`}
-                       name={`external_receiver.${index}.name`}
+                       id={`input_personnel_external_${index}`}
+                       name={`letter_personnel_external.${index}.name`}
                        isRequired={false}
                        label={'Penerima Surat (External)'}
                        onChange={handleInputChange}
@@ -46,8 +46,8 @@ const RecipientLetterForm = ({
                        placeholder={'Ketik nama / jabatan'}
                       />
                       <CustomTextField
-                       id={`input_external_email_${index}`}
-                       name={`external_receiver.${index}.email`}
+                       id={`input_personnel_external_email_${index}`}
+                       name={`letter_personnel_external.${index}.email`}
                        isRequired={false}
                        onChange={handleInputChange}
                        value={form.email}
@@ -57,8 +57,8 @@ const RecipientLetterForm = ({
                        placeholder={'Ketik Email'}
                       />
                       <CustomTextField
-                       id={`input_external_description_${index}`}
-                       name={`external_receiver.${index}.description`}
+                       id={`input_personnel_external_description_${index}`}
+                       name={`letter_personnel_external.${index}.description`}
                        isRequired={false}
                        onChange={handleInputChange}
                        value={form.description}
@@ -68,7 +68,7 @@ const RecipientLetterForm = ({
                        placeholder={'Ketik Keterangan'}
                       />
                         {
-                            values.external_receiver.length > 1 && (
+                            values.letter_personnel_external.length > 1 && (
                                 <CustomButton
                                     id={`btn_delete_${index}`}
                                     type={'button'}
