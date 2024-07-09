@@ -85,6 +85,7 @@ const InboxComponent = () => {
         setRowsPerPage(event);
     };
 
+    // this for handle sort
     const handleRequestSort = (event, headId) => {
         const isAsc = sort === headId && direction === 'asc';
         setDirection(isAsc ? 'desc' : 'asc');
